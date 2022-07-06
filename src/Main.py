@@ -3,7 +3,7 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QShortcut, QApplication, QGraphicsDropShadowEffect, QLabel, QDesktopWidget, QFrame, QStackedWidget
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QColor, QCursor, QKeySequence
-import config, TitleBar, Snap, SnapButton, DSButton, DSPage
+import config, TitleBar, Snap, SnapButton, DSButton, DSPage, ArrayPage
 from platform import system
 operatingSystem = system()
 
@@ -85,7 +85,9 @@ class MainWindow(QFrame):
         self.dataStructurePage = DSPage.DataStructurePage(self)
         # add the data structure page to the stacked widget
         self.stackedWidget.addWidget(self.dataStructurePage)
-        
+        # add the array page to the stacked widget
+        self.arrayPage = ArrayPage.ArrayWidget(self.parent)
+        self.stackedWidget.addWidget(self.arrayPage)
         
 
 
@@ -420,99 +422,8 @@ class MainWindow(QFrame):
     def mouseMoveEvent(self, event):
         self.snapWidget.hide()
         config.isSnapWidget = False
-        pos = event.pos()
+        
         QApplication.setOverrideCursor(Qt.ArrowCursor)
-        if config.isMaximized == False:
-            # top left
-            if pos.x() <= 10 and pos.y() <= 10:
-                QApplication.setOverrideCursor(Qt.SizeFDiagCursor)
-            # top right
-            elif pos.x() >= self.width() - 8 and pos.y() <= 8:
-                QApplication.setOverrideCursor(Qt.SizeBDiagCursor)
-            # top
-            elif pos.y() <= 5 and pos.x() > 5 and pos.x() < self.width() - 5:
-                QApplication.setOverrideCursor(Qt.SizeVerCursor)
-            # bottom left
-            elif pos.y() >= self.height() - 8 and pos.x() <= 8:
-                QApplication.setOverrideCursor(Qt.SizeBDiagCursor)
-            # bottom right
-            elif pos.x() >= self.width() - 8 and pos.y() >= self.height() - 8:
-                QApplication.setOverrideCursor(Qt.SizeFDiagCursor)
-            # bottom
-            elif pos.x() > 0 and pos.x() < self.width() - 8 and pos.y() >= self.height() - 8:
-                QApplication.setOverrideCursor(Qt.SizeVerCursor)
-            # left
-            elif pos.x() <= 5 and pos.y() > 5:
-                QApplication.setOverrideCursor(Qt.SizeHorCursor)
-            # right
-            elif pos.x() >= self.width() - 5 and pos.y() > 5:
-                QApplication.setOverrideCursor(Qt.SizeHorCursor)
-            else:
-                QApplication.setOverrideCursor(Qt.ArrowCursor)
-        # if they are resizing
-        # need to subtract the movement from the width/height 
-        # but also need to account for if they are resizing horizontally from the left or
-        # vertically from the top because we need to shift the window to the right/down the same amount
-        if self.pressing and self.resizingWindow:
-            # resize from the top
-            if self.top == True:
-                # resize from the top
-                if self.height() - event.pos().y() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), self.width(), self.height() - event.pos().y())
-            # resize from the top left
-            if self.tl == True:
-                # move both dimensions if both boundaries are okay
-                if self.width() - event.pos().x() >= config.minSize and self.height() - event.pos().y() >= config.minSize:
-                    self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y() + event.pos().y(), self.width() - event.pos().x(), self.height() - event.pos().y())
-                # move only top if width is already at its smallest
-                elif self.height() - event.pos().y() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), self.width(), self.height() - event.pos().y())
-                # move only left if height is at its smallest
-                elif self.width() - event.pos().x() > config.minSize:
-                    self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), self.height())
-            
-            # resize top right
-            if self.tr == True:
-                pos = event.pos().x() 
-                # top right
-                if self.height() - event.pos().y() >= config.minSize and self.width() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), pos, self.height() - event.pos().y())
-
-                # resize from the top
-                elif self.height() - event.pos().y() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), self.width(), self.height() - event.pos().y())
-                elif self.width() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y(), pos, self.height()) 
-
-            # resize from the left to the right
-            if self.left == True:
-                # resize from the left
-                if self.width() - event.pos().x() > config.minSize:
-                    self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), self.height())
-            # resize from the right
-            if self.right == True:
-                pos = event.pos().x()
-                if self.width() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y(), pos, self.height()) 
-            # resize from the bottom
-            if self.bottom == True:
-                pos = event.pos().y()
-                if self.height() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y(), self.width(), pos) 
-            # resize from the bottom right
-            if self.br == True:
-                pos = event.pos()
-                if self.height() >= config.minSize and self.width() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y(), pos.x(), pos.y()) 
-            # resize from the bottom left
-            if self.bl == True:
-                pos = event.pos().y()
-                if self.width() - event.pos().x() > config.minSize and self.height() >= config.minSize:
-                    self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), pos)
-                elif self.height() >= config.minSize:
-                    self.setGeometry(self.pos().x(), self.pos().y(), self.width(), pos) 
-                elif self.width() - event.pos().x() > config.minSize:
-                    self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), self.height())
             
     # if the mouse button is released then set 'pressing' as false
     def mouseReleaseEvent(self, event):

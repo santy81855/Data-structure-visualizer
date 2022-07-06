@@ -3,7 +3,7 @@ appName = "AppName"
 # The logo for the taskbar
 logoName = "logo.ico"
 # Toggle the bar at the bottom with the snap features
-infoBar = True
+infoBar = False
 # make the resolution global variables
 screen_resolution = 0
 width = 0
@@ -18,7 +18,7 @@ focused = False # variable to track if the gui is focused so it knows to track t
 opacity = 0.98
 
 # variable for the minimum resolution (minSize x minSize)
-minSize = 500
+minSize = 800
 # variable to track the margins used on the main layout
 MARGIN = 5
 # variable to allow going back to previous size after maximizing
@@ -28,6 +28,10 @@ isMaximized = False
 application = None
 mainWin = None
 titleBar = None
+arrayPage = None
+arrMemoryBlocks = []
+arrSize = 0
+arrayStructure = []
 
 # variable to be able to snap to sides and corners
 leftDown = False
@@ -68,6 +72,7 @@ clay = "#9d6556"
 
 backgroundColor = almostBlack
 accentColor1 = lightBeige
+accentColor2 = clay
 
 '''
 # 3 - Blue

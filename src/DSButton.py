@@ -2,7 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QPushButton
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QFont
-import config
+import config, ArrayPage
 
 class DataStructureButton(QPushButton):
     def __init__(self, parent, text):
@@ -22,4 +22,5 @@ class DataStructureButton(QPushButton):
         self.clicked.connect(self.onClick)
 
     def onClick(self):
+        config.mainWin.stackedWidget.setCurrentIndex(1)
         print("hello")
